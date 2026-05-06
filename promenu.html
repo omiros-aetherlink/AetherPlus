@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AetherLink | United by Code</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Core Aero Variables */
+            --glass-bg: rgba(255, 255, 255, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --aero-glow: 0 15px 35px rgba(0, 242, 255, 0.4);
+            --card-gap: 40px;
+            --float-speed: 6s;
+            --particle-size: 2px;
+            --ui-radius: 24px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* Changed to flex-start to prevent centering overlaps */
+            justify-content: flex-start;
+            /* Default Dark Theme applied directly to the body */
+            background: radial-gradient(circle at 50% -20%, #2b5876 0%, transparent 70%), linear-gradient(180deg, #141e30 0%, #243b55 100%);
+            font-family: 'Outfit', sans-serif;
+            /* Changed overflow to allow scrolling on small screens if needed */
+            overflow-x: hidden;
+            overflow-y: auto;
+            transition: filter 0.5s ease, background 0.8s ease;
+        }
+
+        /* Identity / Header area */
+        .identity {
+            /* Changed from absolute to relative to prevent overlap */
+            position: relative;
+            margin-top: 6vh;
+            margin-bottom: 4vh;
+            text-align: center;
+            z-index: 10; 
+            pointer-events: none;
+            width: 100%;
+        }
+
+        .identity h1 {
+            font-size: 3.8rem; 
+            margin: 0;
+            font-weight: 800;
+            letter-spacing: 12px; 
+            color: white;
+            text-shadow: 0 0 20px rgba(255,255,255,0.8), 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .identity p {
+            font-size: 1.1rem; 
+            margin-top: 5px;
+            font-weight: 400;
+            letter-spacing: 6px; 
+            color: rgba(255, 255, 255, 0.95);
+            text-transform: uppercase;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+
+        /* Rectangular Slides Container */
+        .hub-container {
+            display: flex;
+            /* Added flex-wrap so cards bump down instead of squishing/overlapping */
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: var(--card-gap);
+            width: 90vw;
+            max-width: 1400px;
+            z-index: 10;
+            padding-bottom: 6vh;
+            transition: all 0.6s cubic-bezier(0.2, 1, 0.3, 1);
+        }
+
+        /* The Slide Cards */
+        .slide-card {
+            position: relative;
+            flex: 1;
+            /* Added min-width so they wrap correctly on smaller screens */
+            min-width: 250px;
+            max-width: 300px;
+            height: 520px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-top: 2px solid rgba(255, 255, 255, 0.8);
+            border-radius: var(--ui-radius);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2), inset 0 0 20px rgba(255,255,255,0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 35px 20px;
+            cursor: pointer;
+            text-align: center;
+            color: white;
+            animation: kineticFloat var(--float-speed) infinite ease-in-out;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+        }
+
+        /* Stagger the float animation for organic feel */
+        .slide-card:nth-child(1) { animation-delay: 0s; }
+        .slide-card:nth-child(2) { animation-delay: -1.5s; }
+        .slide-card:nth-child(3) { animation-delay: -3s; }
+        .slide-card:nth-child(4) { animation-delay: -4.5s; }
+
+        /* Glossy Aero highlight */
+        .slide-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 120px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.4), transparent);
+            border-radius: var(--ui-radius) var(--ui-radius) 0 0;
+            pointer-events: none;
+        }
+
+        .slide-card:hover { 
+            transform: translateY(-15px) scale(1.03); 
+            box-shadow: var(--aero-glow);
+            border-color: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .slide-card:active {
+            transform: translateY(-5px) scale(0.98);
+        }
+
+        /* ORB STYLES */
+        .orb-container {
+            width: 130px;
+            height: 130px;
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .orb {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9) 0%, transparent 65%), var(--glass-bg);
+            border: 2px solid rgba(255,255,255,0.8);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15), inset 0 -10px 20px rgba(255,255,255,0.3);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 2;
+        }
+
+        .orb::after {
+            content: '';
+            position: absolute;
+            top: 5%; left: 15%; width: 70%; height: 35%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.8), transparent);
+            border-radius: 50% 50% 30% 30%;
+            pointer-events: none;
+        }
+
+        .orb-img {
+            width: 65%;
+            height: 65%;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15));
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        .slide-card:hover .orb {
+            transform: scale(1.15) rotate(5deg);
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.8), inset 0 0 20px rgba(0, 242, 255, 0.4);
+            border-color: #fff;
+        }
+
+        /* Card Text Contents */
+        .card-title {
+            font-size: 1.8rem;
+            margin: 0 0 15px 0;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.4);
+        }
+
+        .card-desc {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.9);
+            margin: 0;
+            font-weight: 300;
+            flex-grow: 1;
+        }
+
+        .launch-btn {
+            margin-top: 20px;
+            padding: 12px 25px;
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.5);
+            border-radius: 20px;
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .slide-card:hover .launch-btn {
+            background: white;
+            color: #0083b0;
+            box-shadow: 0 0 15px rgba(255,255,255,0.8);
+        }
+
+        /* Animations */
+        @keyframes kineticFloat { 
+            0%, 100% { transform: translateY(0); } 
+            50% { transform: translateY(-15px); } 
+        }
+        @keyframes overclock { 
+            0%, 100% { transform: translate(0,0); } 
+            25% { transform: translate(3px, 3px); } 
+            75% { transform: translate(-3px, -3px); } 
+        }
+        @keyframes aeroSlide { 
+            from { opacity: 0; transform: translate(-50%, -45%) scale(0.95); } 
+            to { opacity: 1; transform: translate(-50%, -50%) scale(1); } 
+        }
+
+        /* UI Controls */
+        .controls-wrapper {
+            position: fixed;
+            top: 40px;
+            right: 40px;
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .icon-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        .icon-btn:hover {
+            background: rgba(255,255,255,0.4);
+            transform: scale(1.1);
+        }
+
+        /* Settings Panel */
+        #settings-panel {
+            position: fixed;
+            width: 450px;
+            max-height: 85vh;
+            overflow-y: auto;
+            background: rgba(20, 30, 40, 0.65);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid var(--glass-border);
+            border-top: 2px solid rgba(255,255,255,0.6);
+            border-radius: var(--ui-radius);
+            padding: 30px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+            display: none;
+            z-index: 100;
+            color: white;
+            animation: aeroSlide 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+        }
+
+        .section-header {
+            background: linear-gradient(90deg, rgba(255,255,255,0.15), transparent);
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            margin: 20px 0 15px 0;
+            text-transform: uppercase;
+            font-weight: 800;
+            border-left: 4px solid #00f2ff;
+        }
+
+        .setting-row { 
+            margin-bottom: 18px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
+        
+        .setting-row label { font-size: 0.95rem; font-weight: 400; }
+        
+        .setting-row input[type="range"] {
+            width: 150px;
+            accent-color: #00f2ff;
+        }
+
+        .btn-action { 
+            padding: 8px 16px; 
+            border: none; 
+            border-radius: 12px; 
+            background: rgba(255,255,255,0.9); 
+            color: #004455; 
+            font-weight: 800; 
+            cursor: pointer; 
+            font-size: 0.75rem; 
+            transition: all 0.2s ease;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .btn-action:hover { background: #00f2ff; color: #000; box-shadow: 0 0 10px #00f2ff; }
+
+        /* Loading Overlay */
+        #transition-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: white;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        /* --- Authentication Overlay Styles --- */
+        #auth-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #0a101a; 
+            z-index: 100000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease;
+        }
+        .auth-box {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-top: 2px solid rgba(0, 242, 255, 0.5);
+            border-radius: var(--ui-radius);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5), inset 0 0 20px rgba(0, 242, 255, 0.1);
+            color: white;
+            width: 90%;
+            max-width: 400px;
+        }
+        .auth-box h2 {
+            margin-top: 0;
+            font-weight: 600;
+            letter-spacing: 2px;
+            color: #00f2ff;
+            text-shadow: 0 0 10px rgba(0, 242, 255, 0.5);
+        }
+        .auth-box input {
+            width: 100%;
+            padding: 12px;
+            margin: 20px 0;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            color: white;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            text-align: center;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .auth-box input:focus {
+            border-color: #00f2ff;
+        }
+        .auth-box button {
+            background: #00f2ff;
+            color: #004455;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-family: 'Outfit', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+        }
+        .auth-box button:hover {
+            box-shadow: 0 0 15px #00f2ff;
+            transform: scale(1.05);
+        }
+        .auth-spinner {
+            display: none;
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(0, 242, 255, 0.2);
+            border-top: 4px solid #00f2ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        .auth-msg {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            min-height: 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body id="app-body">
+
+    <div id="auth-overlay">
+        <div class="auth-box">
+            <h2>AETHERLINK</h2>
+            <p style="font-size: 0.9rem; color: rgba(255,255,255,0.7);">Please enter your Purchase Key to gain access.</p>
+            <input type="text" id="purchase-key" placeholder="Enter key..." autocomplete="off">
+            <button id="verify-btn" onclick="verifyPurchaseKey()">VERIFY</button>
+            <div id="auth-spinner" class="auth-spinner"></div>
+            <div id="auth-msg" class="auth-msg"></div>
+        </div>
+    </div>
+
+    <canvas id="bg-canvas" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none;"></canvas>
+
+    <div class="identity">
+        <h1>AetherPlus+</h1>
+        <p id="slogan-text">AI for everyone • No matter your question</p>
+    </div>
+
+    <div class="hub-container" id="hub">
+        
+        <div class="slide-card" onclick="initiateLaunch('megacalc.html')">
+            <div class="orb-container">
+                <div class="orb">
+                    <img src="logopro1.png" alt="MegaCalc Logo" class="orb-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2921/2921222.png'">
+                </div>
+            </div>
+            <h3 class="card-title">MegaCalc</h3>
+            <p class="card-desc">An advanced, multi-tool computational engine designed to solve complex mathematical problems and visualize data in real-time, as well as being able to help with buisness and finance questions.</p>
+            <div class="launch-btn">Initialize</div>
+        </div>
+
+        <div class="slide-card" onclick="initiateLaunch('techzen.html')">
+            <div class="orb-container">
+                <div class="orb">
+                    <img src="logopro2.png" alt="TechZen Logo" class="orb-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2083/2083214.png'">
+                </div>
+            </div>
+            <h3 class="card-title">TechZen</h3>
+            <p class="card-desc">Your ultimate IT and tech support guru. Equipped to troubleshoot software bugs, optimize hardware, and provide programming guidance.</p>
+            <div class="launch-btn">Initialize</div>
+        </div>
+
+        <div class="slide-card" onclick="initiateLaunch('AcademiaPro.html')">
+            <div class="orb-container">
+                <div class="orb">
+                    <img src="logopro3.png" alt="AcademiaPro Logo" class="orb-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2232/2232688.png'">
+                </div>
+            </div>
+            <h3 class="card-title">AcademiaPro</h3>
+            <p class="card-desc">A comprehensive academic research assistant. Generates study guides, formats citations, and summarizes extensive literary texts, while also being able to help in emotional support.</p>
+            <div class="launch-btn">Initialize</div>
+        </div>
+
+        <div class="slide-card" onclick="initiateLaunch('HomePod+.html')">
+            <div class="orb-container">
+                <div class="orb">
+                    <img src="logopro4.png" alt="HomePod+ Logo" class="orb-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2911/2911568.png'">
+                </div>
+            </div>
+            <h3 class="card-title">HomePod+</h3>
+            <p class="card-desc">Your smart lifestyle manager. Integrates home automation tips, daily scheduling, culinary recipes, and household organization.</p>
+            <div class="launch-btn">Initialize</div>
+        </div>
+
+    </div>
+    
+    <div class="controls-wrapper">
+        <div class="icon-btn" onclick="window.location.href='emu.html'" title="EmuPack">🛠️</div>
+        <div class="icon-btn" onclick="window.location.href='https://aerochat-5ec3d.web.app/'" title="Open Global Chat">💬</div>
+        <div class="icon-btn" onclick="toggleSettings()" title="System Preferences">⚙️</div>
+    </div>
+
+    <div id="settings-panel">
+        <h2 style="margin:0; text-align:center; font-weight: 300; letter-spacing: 3px;">SYSTEM COMMAND</h2>
+        
+        <div class="section-header">Interface (UI)</div>
+        <div class="setting-row">
+            <label>Glass Tint Colour</label>
+            <input type="color" value="#ffffff" oninput="changeTint(this.value)">
+        </div>
+        <div class="setting-row">
+            <label>Bloom Intensity</label>
+            <input type="range" min="0" max="60" value="35" oninput="adjustGlow(this.value)">
+        </div>
+        <div class="setting-row">
+            <label>Slide Spacing</label>
+            <input type="range" min="10" max="100" value="40" oninput="adjustSpacing(this.value)">
+        </div>
+
+        <div class="section-header">System Core</div>
+        <div class="setting-row">
+            <label>Ambient Frequency</label>
+            <button id="music-btn" class="btn-action" onclick="toggleMusic()">ENABLE</button>
+        </div>
+        <div class="setting-row">
+            <label>Kinetic Energy</label>
+            <input type="range" min="1" max="10" value="6" oninput="adjustFloatSpeed(this.value)">
+        </div>
+        <div class="setting-row">
+            <label>Atmospheric Engine</label>
+            <button class="btn-action" onclick="cycleTheme()">CHANGE WORLD</button>
+        </div>
+        <div class="setting-row">
+            <label>Hardware Overclock</label>
+            <button class="btn-action" style="background:#ff3333; color:white; box-shadow:none;" onclick="overclockSystem()">INITIATE</button>
+        </div>
+        <div class="setting-row">
+            <label>Aether Density</label>
+            <input type="range" min="1" max="6" value="2" oninput="adjustParticleSize(this.value)">
+        </div>
+
+        <button onclick="toggleSettings()" style="width:100%; padding:15px; background: #00f2ff; border:none; border-radius:15px; font-weight:800; color: #004455; cursor:pointer; margin-top:20px; font-size: 1rem; font-family: 'Outfit', sans-serif;">CONFIRM SYNC</button>
+    </div>
+
+    <div id="transition-overlay"></div>
+
+    <script>
+        // --- Core Variables ---
+        let currentTheme = 0; 
+        let isOverclocked = false; 
+        
+        const ambientMusic = new Audio('main.mp3'); 
+        ambientMusic.loop = true;
+
+        // --- Session Authentication Check ---
+        // Checks if the user already authenticated in this session
+        document.addEventListener("DOMContentLoaded", () => {
+            if (sessionStorage.getItem('aetherAuthenticated') === 'true') {
+                const authOverlay = document.getElementById('auth-overlay');
+                if (authOverlay) {
+                    authOverlay.style.display = 'none'; // Hide immediately on load
+                }
+            }
+        });
+
+        // --- Bot Launch Logic ---
+        function initiateLaunch(fileName) {
+            const overlay = document.getElementById('transition-overlay');
+            const hub = document.getElementById('hub');
+            
+            hub.style.transform = "scale(1.2)";
+            hub.style.filter = "blur(15px)";
+            document.body.style.filter = "brightness(1.5)";
+            
+            overlay.style.opacity = "1";
+            
+            setTimeout(() => {
+                window.location.href = fileName;
+                setTimeout(() => {
+                    hub.style.transform = "scale(1)";
+                    hub.style.filter = "none";
+                    document.body.style.filter = "none";
+                    overlay.style.opacity = "0";
+                }, 500);
+            }, 600);
+        }
+
+        // --- Settings Panel Logic ---
+        function toggleSettings() {
+            const panel = document.getElementById('settings-panel');
+            const hub = document.getElementById('hub');
+            const isOpen = panel.style.display === 'block';
+            
+            panel.style.display = isOpen ? 'none' : 'block';
+            hub.style.filter = isOpen ? 'none' : 'blur(20px) brightness(0.8)';
+            hub.style.transform = isOpen ? 'scale(1)' : 'scale(0.95)';
+        }
+
+        function changeTint(val) { 
+            const hexToRgb = hex => hex.match(/\w\w/g).map(x => parseInt(x, 16));
+            const [r, g, b] = hexToRgb(val);
+            document.documentElement.style.setProperty('--glass-bg', `rgba(${r}, ${g}, ${b}, 0.2)`); 
+            document.documentElement.style.setProperty('--glass-border', `rgba(${r}, ${g}, ${b}, 0.5)`); 
+        }
+
+        function adjustGlow(val) { 
+            document.documentElement.style.setProperty('--aero-glow', `0 15px 40px rgba(0, 242, 255, ${val / 100})`); 
+        }
+
+        function adjustSpacing(val) { 
+            document.documentElement.style.setProperty('--card-gap', val + 'px'); 
+        }
+
+        function toggleMusic() {
+            const btn = document.getElementById('music-btn');
+            if (ambientMusic.paused) { 
+                ambientMusic.play().catch(e => console.log("Audio play blocked by browser.")); 
+                btn.innerText = "PAUSE"; 
+                btn.style.background = "#4ade80"; 
+                btn.style.color = "white"; 
+            } else { 
+                ambientMusic.pause(); 
+                btn.innerText = "ENABLE"; 
+                btn.style.background = "rgba(255,255,255,0.9)"; 
+                btn.style.color = "#004455"; 
+            }
+        }
+
+        function adjustFloatSpeed(val) { 
+            let speed = (12 - val) + 's';
+            document.documentElement.style.setProperty('--float-speed', speed); 
+        }
+
+        function cycleTheme() {
+            const body = document.getElementById('app-body');
+            const themes = [
+                // 0: Default Midnight Dark Mode
+                'radial-gradient(circle at 50% -20%, #2b5876 0%, transparent 70%), linear-gradient(180deg, #141e30 0%, #243b55 100%)',
+                // 1: Original Blue/Green Glass
+                'radial-gradient(circle at 50% 0%, rgba(255,255,255,0.8) 0%, transparent 60%), radial-gradient(circle at 10% 90%, #4ade80 0%, transparent 50%), radial-gradient(circle at 90% 90%, #0080ff 0%, transparent 50%), linear-gradient(180deg, #00b4db 0%, #0083b0 100%)',
+                // 2: Cyberpunk Red/Purple
+                'radial-gradient(circle at 20% 0%, #ff0055 0%, transparent 50%), radial-gradient(circle at 80% 100%, #6600ff 0%, transparent 50%), linear-gradient(135deg, #1a0033 0%, #000000 100%)',
+                // 3: Clean White/Silver Mac Aero
+                'radial-gradient(circle at 50% 50%, #ffffff 0%, #e0e5ec 100%)'
+            ];
+            currentTheme = (currentTheme + 1) % themes.length;
+            body.style.background = themes[currentTheme];
+        }
+
+        function overclockSystem() {
+            const hub = document.getElementById('hub');
+            const btn = document.querySelector('button[onclick="overclockSystem()"]');
+            isOverclocked = !isOverclocked;
+            
+            if(isOverclocked) {
+                hub.style.animation = 'overclock 0.1s infinite';
+                btn.innerText = "DISABLE";
+                btn.style.background = "#4ade80";
+            } else {
+                hub.style.animation = 'none';
+                btn.innerText = "INITIATE";
+                btn.style.background = "#ff3333";
+            }
+        }
+
+        function adjustParticleSize(val) {
+            document.documentElement.style.setProperty('--particle-size', val + 'px');
+        }
+
+        // --- Background Particle System ---
+        (function() {
+            const canvas = document.getElementById('bg-canvas');
+            const ctx = canvas.getContext('2d');
+            let width, height;
+
+            function resize() {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+
+            const particles = [];
+            const particleCount = 150;
+
+            for (let i = 0; i < particleCount; i++) {
+                particles.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    vx: (Math.random() - 0.5) * 0.5,
+                    vy: (Math.random() - 0.5) * 0.5,
+                    baseAlpha: Math.random() * 0.5 + 0.1
+                });
+            }
+
+            function animateParticles() {
+                ctx.clearRect(0, 0, width, height);
+                
+                const rootStyles = getComputedStyle(document.documentElement);
+                const pSize = parseFloat(rootStyles.getPropertyValue('--particle-size')) || 2;
+                
+                for (let i = 0; i < particles.length; i++) {
+                    let p = particles[i];
+                    
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    
+                    if (p.x < -10) p.x = width + 10;
+                    if (p.x > width + 10) p.x = -10;
+                    if (p.y < -10) p.y = height + 10;
+                    if (p.y > height + 10) p.y = -10;
+
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, pSize, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255, 255, 255, ${p.baseAlpha})`;
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = "rgba(255, 255, 255, 0.8)";
+                    ctx.fill();
+                    ctx.shadowBlur = 0; 
+                }
+                requestAnimationFrame(animateParticles);
+            }
+            animateParticles();
+        })();
+
+        // --- Authentication Logic ---
+        function verifyPurchaseKey() {
+            const input = document.getElementById('purchase-key').value;
+            const btn = document.getElementById('verify-btn');
+            const spinner = document.getElementById('auth-spinner');
+            const msg = document.getElementById('auth-msg');
+
+            btn.style.display = 'none';
+            spinner.style.display = 'block';
+            msg.innerText = "Verifying purchase key...";
+            msg.style.color = "rgba(255,255,255,0.7)";
+
+            // 5 seconds verification delay
+            setTimeout(() => {
+                const regex = /^[A-Z]\d{2}[^a-zA-Z0-9][a-z][^a-zA-Z0-9][A-Z][a-z]{2}[^a-zA-Z0-9][a-z]{2}[A-Z]\d[^a-zA-Z0-9]\d[A-Z][a-z]$/;
+                
+                if (regex.test(input) || input === 'WiiUWiiU') {
+                    // --- SAVE SESSION STATE HERE ---
+                    sessionStorage.setItem('aetherAuthenticated', 'true');
+                    
+                    msg.innerText = "Access Granted.";
+                    msg.style.color = "#4ade80";
+                    spinner.style.display = 'none';
+                    setTimeout(() => {
+                        const overlay = document.getElementById('auth-overlay');
+                        overlay.style.opacity = '0';
+                        setTimeout(() => overlay.remove(), 500);
+                    }, 800);
+                } else {
+                    spinner.style.display = 'none';
+                    btn.style.display = 'inline-block';
+                    msg.innerText = "Invalid Purchase Key.";
+                    msg.style.color = "#ff3333";
+                }
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

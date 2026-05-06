@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><title>HomePod+</title>
+<style>
+  /* Base variables for light/dark - Warm/Beige Theme */
+  :root { 
+    --bg-gradient: linear-gradient(135deg, #fdfbf7, #f3e8e0);
+    --chat-bg: rgba(255, 252, 248, 0.85); 
+    --text-color: #4a4036; 
+    --wave-color: #e6d5c3; /* Default Beige */
+    --particle-color: rgba(230, 213, 195, 0.5); /* Default Beige */
+    --user-msg-bg: linear-gradient(135deg, #d4a373, #cc8b5e); /* Warm Terracotta */
+    --bot-msg-bg: rgba(245, 235, 224, 0.9);
+    --btn-bg: linear-gradient(135deg, #d4a373, #cc8b5e);
+    --btn-hover: linear-gradient(135deg, #cc8b5e, #b87a4d);
+    --border-glow: 0 0 15px rgba(212, 163, 115, 0.2);
+  }
+  .dark-mode { 
+    --bg-gradient: linear-gradient(135deg, #2c2520, #1a1613); 
+    --chat-bg: rgba(44, 37, 32, 0.85); 
+    --text-color: #eaddd7; 
+    --user-msg-bg: linear-gradient(135deg, #8b5e34, #6b4423); 
+    --bot-msg-bg: rgba(60, 50, 44, 0.9); 
+    --btn-bg: linear-gradient(135deg, #8b5e34, #6b4423);
+    --btn-hover: linear-gradient(135deg, #6b4423, #4a2e15);
+    --wave-color: #5c4b3c; /* Default Dark Beige */
+    --particle-color: rgba(92, 75, 60, 0.4);
+    --border-glow: 0 0 20px rgba(139, 94, 52, 0.2);
+  }
+
+  body { font-family: 'Segoe UI', sans-serif; background: var(--bg-gradient); color: var(--text-color); display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; transition: background 0.3s, color 0.3s; }
+  
+  /* Background Elements */
+  .waves { position: absolute; bottom: 0; left: 0; width: 100%; height: 15vh; z-index: -1; }
+  .parallax > use { animation: move-forever 25s linear infinite; fill: var(--wave-color); transition: fill 0.8s ease-in-out; opacity: 0.6; }
+  @keyframes move-forever { 0% { transform: translate3d(-90px,0,0); } 100% { transform: translate3d(85px,0,0); } }
+  
+  /* Particles */
+  #particles { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; overflow: hidden; }
+  .particle { position: absolute; border-radius: 50%; background: var(--particle-color); animation: float-up linear infinite; transition: background 0.8s ease-in-out; box-shadow: 0 0 10px var(--particle-color); }
+  @keyframes float-up { 
+    0% { transform: translateY(100vh) scale(0); opacity: 0; } 
+    20% { opacity: 1; } 
+    80% { opacity: 1; } 
+    100% { transform: translateY(-10vh) scale(1.5); opacity: 0; } 
+  }
+
+  /* Glossy Chatbot Container */
+  .chatbot { width: 900px; max-width: 95vw; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.2), var(--border-glow); padding: 20px; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); background: var(--chat-bg); position: relative; z-index: 10; animation: float-box 6s ease-in-out infinite; transition: 0.3s; border: 1px solid rgba(255,255,255,0.1); }
+  @keyframes float-box { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+  
+  h2 { text-align: center; margin-top: 0; font-weight: 600; letter-spacing: 1px; color: var(--text-color); }
+
+  .chat-box { height: 400px; overflow-y: auto; padding: 15px; background: transparent; margin-bottom: 12px; border-radius: 15px; display: flex; flex-direction: column; gap: 12px; border: 1px solid rgba(128,128,128,0.2); box-shadow: inset 0 2px 10px rgba(0,0,0,0.03); }
+  
+  .chat-box::-webkit-scrollbar { width: 6px; }
+  .chat-box::-webkit-scrollbar-thumb { background: rgba(128,128,128,0.3); border-radius: 10px; }
+
+  .input-area { display: flex; gap: 10px; margin-bottom: 15px; }
+  input { flex: 1; padding: 12px 15px; border-radius: 20px; border: 1px solid rgba(128,128,128,0.3); background: var(--chat-bg); color: var(--text-color); outline: none; transition: box-shadow 0.2s; box-shadow: inset 0 2px 5px rgba(0,0,0,0.02); }
+  input:focus { box-shadow: 0 0 8px rgba(212, 163, 115, 0.4); border-color: rgba(212, 163, 115, 0.6); }
+  
+  button { padding: 10px 18px; border-radius: 20px; border: none; cursor: pointer; background: var(--btn-bg); color: #fff; font-weight: bold; transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+  button:hover { background: var(--btn-hover); transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
+  button:active { transform: translateY(1px); }
+  
+  .controls { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .controls button { font-size: 0.9em; padding: 8px 15px; background: rgba(128,128,128,0.15); color: var(--text-color); box-shadow: none; border: 1px solid rgba(128,128,128,0.1); }
+  .controls button:hover { background: rgba(128,128,128,0.25); color: var(--text-color); }
+
+  .user-msg { padding: 12px 16px; border-radius: 18px 18px 0 18px; align-self: flex-end; background: var(--user-msg-bg); color: white; box-shadow: 0 3px 8px rgba(0,0,0,0.08); max-width: 80%; line-height: 1.4; animation: popIn 0.3s ease-out; }
+  .bot-msg { padding: 12px 16px; border-radius: 18px 18px 18px 0; align-self: flex-start; background: var(--bot-msg-bg); color: var(--text-color); box-shadow: 0 3px 8px rgba(0,0,0,0.05); max-width: 80%; line-height: 1.5; border: 1px solid rgba(255,255,255,0.05); animation: popIn 0.3s ease-out; }
+  
+  @keyframes popIn { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+</style>
+</head>
+<body>
+
+<div id="particles"></div>
+<svg class="waves" viewBox="0 24 150 28" preserveAspectRatio="none">
+<defs>
+<path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+</defs>
+<g class="parallax"><use xlink:href="#gentle-wave" x="48" y="0" /><use xlink:href="#gentle-wave" x="48" y="3" /></g></svg>
+
+<div class="chatbot">
+  <h2>🏡 HomePod+</h2>
+  <div id="chatBox" class="chat-box"><p class="bot-msg">System online. Ready to assist with cooking, cleaning, room layouts, and home maintenance!</p></div>
+  <div class="input-area">
+    <input type="text" id="userInput" placeholder="Ask a home query..." onkeypress="if(event.key === 'Enter') sendMessage()">
+    <button onclick="sendMessage()">Ask</button>
+  </div>
+  <div class="controls">
+    <button id="micBtn" onclick="toggleMic()">🎤 Mic</button>
+    <button onclick="clearChat()">🧹 Clear</button>
+    <button onclick="saveChat()">💾 Save Log</button>
+    <button onclick="randomTip()">💡 Home Tip</button>
+    <button id="musicBtn" onclick="toggleMusic()">🎵 Music</button>
+    <button onclick="document.body.classList.toggle('dark-mode')">🌓 Theme</button>
+  </div>
+</div>
+
+<script>
+// --- Particle Generator ---
+function initParticles() {
+  const container = document.getElementById('particles');
+  const particleCount = 40;
+  for(let i = 0; i < particleCount; i++) {
+    let p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + 'vw';
+    p.style.width = p.style.height = (Math.random() * 8 + 4) + 'px';
+    p.style.animationDuration = (Math.random() * 6 + 4) + 's';
+    p.style.animationDelay = (Math.random() * 5) + 's';
+    container.appendChild(p);
+  }
+}
+initParticles();
+
+// --- Dynamic Color Logic ---
+function updateEnvironmentColors(query) {
+  const q = query.toLowerCase();
+  const root = document.documentElement;
+  
+  // Keywords to trigger color shifts
+  const cookingWords = ['cook', 'bake', 'recipe', 'food', 'kitchen', 'oven', 'fry', 'boil', 'meal', 'dinner', 'grill'];
+  const cleaningWords = ['clean', 'wash', 'mop', 'sweep', 'dust', 'stain', 'laundry', 'vacuum', 'bathroom', 'scrub', 'smell'];
+  
+  const isCooking = cookingWords.some(word => q.includes(word));
+  const isCleaning = cleaningWords.some(word => q.includes(word));
+
+  if (isCooking) {
+    // Glossy Orange
+    root.style.setProperty('--wave-color', '#ffa866'); 
+    root.style.setProperty('--particle-color', 'rgba(255, 168, 102, 0.6)');
+  } else if (isCleaning) {
+    // Glossy Green
+    root.style.setProperty('--wave-color', '#86efac'); 
+    root.style.setProperty('--particle-color', 'rgba(134, 239, 172, 0.6)');
+  } else {
+    // Reset to CSS defaults (Beige)
+    root.style.removeProperty('--wave-color');
+    root.style.removeProperty('--particle-color');
+  }
+}
+
+// --- Chat Logic ---
+const API_KEY = "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";
+const SYSTEM_PROMPT = "You are HomePod+. You are an exclusive home assistant AI. You ONLY answer questions related to home management: interior decor, room layouts, home damages/repairs, cooking, and cleaning. If the user asks about ANYTHING else (coding, math, general trivia, politics, etc.), you must politely but firmly refuse and state that you are strictly programmed for home help.";
+
+async function sendMessage() {
+  let input = document.getElementById("userInput");
+  let chatBox = document.getElementById("chatBox");
+  if(!input.value.trim()) return;
+  
+  const q = input.value; 
+  input.value = "";
+  
+  // Trigger dynamic background color shift based on text
+  updateEnvironmentColors(q);
+  
+  chatBox.innerHTML += `<p class="user-msg">${q}</p>`;
+  
+  const loadingId = 'loading-' + Date.now();
+  chatBox.innerHTML += `<p class="bot-msg" id="${loadingId}">Tending to your home query...</p>`;
+  chatBox.scrollTop = chatBox.scrollHeight;
+  
+  try {
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + API_KEY, 
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ 
+        model: "llama-3.3-70b-versatile", 
+        messages: [
+          { role: "system", content: SYSTEM_PROMPT }, 
+          { role: "user", content: q }
+        ] 
+      })
+    });
+    
+    const data = await res.json();
+    document.getElementById(loadingId).remove(); 
+    
+    if (data.error) {
+      chatBox.innerHTML += `<p class="bot-msg" style="color: #d9534f;">Error: ${data.error.message}</p>`;
+    } else {
+      let responseText = data.choices[0].message.content.replace(/\n/g, '<br>');
+      chatBox.innerHTML += `<p class="bot-msg">${responseText}</p>`;
+    }
+  } catch (error) {
+    document.getElementById(loadingId).remove();
+    chatBox.innerHTML += `<p class="bot-msg" style="color: #d9534f;">Connection Error. Check console.</p>`;
+    console.error("Fetch Error:", error);
+  }
+  
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+// --- Control Button Functions ---
+function clearChat() {
+  document.getElementById("chatBox").innerHTML = `<p class="bot-msg">System online. Ready to assist with cooking, cleaning, room layouts, and home maintenance!</p>`;
+  document.documentElement.style.removeProperty('--wave-color');
+  document.documentElement.style.removeProperty('--particle-color');
+}
+
+function saveChat() {
+  const chatText = document.getElementById("chatBox").innerText;
+  const blob = new Blob([chatText], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'HomePod_Log.txt';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function randomTip() {
+  const tips = [
+    "Baking soda and white vinegar are a powerhouse duo for clearing clogged drains naturally.",
+    "To make a small room feel larger, use lighter paint colors and place mirrors opposite your windows.",
+    "Always let your cooked meat rest for 5-10 minutes before slicing to retain the juices.",
+    "Clean your ceiling fan blades easily by sliding an old pillowcase over them and pulling the dust inside.",
+    "When hanging art, the center of the picture should be at eye level (about 57 to 60 inches from the floor)."
+  ];
+  const tip = tips[Math.floor(Math.random() * tips.length)];
+  let chatBox = document.getElementById("chatBox");
+  chatBox.innerHTML += `<p class="bot-msg">💡 <strong>Home Tip:</strong> ${tip}</p>`;
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+// --- Music Toggle Logic ---
+const bgMusic = new Audio('homepod.mp3');
+bgMusic.loop = true;
+let isMusicPlaying = false;
+
+function toggleMusic() {
+  const musicBtn = document.getElementById('musicBtn');
+  if (isMusicPlaying) {
+    bgMusic.pause();
+    isMusicPlaying = false;
+    musicBtn.innerHTML = '🎵 Music';
+  } else {
+    bgMusic.play().catch(e => console.log("Audio play failed (browser may require interaction first):", e));
+    isMusicPlaying = true;
+    musicBtn.innerHTML = '⏸️ Pause';
+  }
+}
+
+// --- Microphone Logic ---
+let recognition;
+let isRecording = false;
+
+if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recognition = new SpeechRecognition();
+  recognition.continuous = false;
+  recognition.interimResults = false;
+  
+  recognition.onresult = function(event) {
+    const transcript = event.results[0][0].transcript;
+    document.getElementById("userInput").value = transcript;
+    // Optional: Auto-send the message by calling sendMessage() here
+  };
+  
+  recognition.onerror = function(event) {
+    console.error("Speech recognition error:", event.error);
+    document.getElementById("micBtn").innerHTML = "🎤 Mic";
+    isRecording = false;
+  };
+
+  recognition.onend = function() {
+    document.getElementById("micBtn").innerHTML = "🎤 Mic";
+    isRecording = false;
+  };
+}
+
+function toggleMic() {
+  if (!recognition) {
+    alert("Speech recognition is not supported in this browser. Try Chrome or Edge.");
+    return;
+  }
+  
+  const micBtn = document.getElementById("micBtn");
+  if (isRecording) {
+    recognition.stop();
+  } else {
+    recognition.start();
+    micBtn.innerHTML = "🔴 Listening...";
+    isRecording = true;
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EmuPackage by Aetherlink</title>
+    <style>
+        :root {
+            --bg: #0a0a1a;
+            --surface: #1a1a2e;
+            --surface2: #16213e;
+            --accent1: #e94560;
+            --accent2: #533483;
+            --text: #eee;
+            --text2: #aaa;
+            --card: #1a1a2e;
+            --border: #533483;
+            --gradient: linear-gradient(135deg, #e94560, #533483);
+        }
+
+        .light {
+            --bg: #f4f4f9;
+            --surface: #ffffff;
+            --surface2: #e0e0e0;
+            --accent1: #d32f2f;
+            --accent2: #512da8;
+            --text: #1a1a1a;
+            --text2: #444;
+            --card: #ffffff;
+            --border: #512da8;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 10, 26, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--surface2);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .light header { background: rgba(255, 255, 255, 0.95); }
+
+        .logo { font-size: 1.5rem; font-weight: 800; letter-spacing: 1px; }
+        .logo span { color: var(--accent1); }
+
+        nav { display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap; }
+        nav a { color: var(--text); text-decoration: none; font-weight: 500; font-size: 0.95rem; transition: color 0.2s; }
+        nav a:hover { color: var(--accent1); }
+
+        .header-btns { display: flex; gap: 10px; }
+        .ui-btn {
+            background: var(--surface2);
+            border: none;
+            color: var(--text);
+            padding: 0.5rem 1.2rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        .ui-btn:hover { background: var(--border); color: #fff; }
+
+        .hero {
+            text-align: center;
+            padding: 150px 5% 90px;
+            background: radial-gradient(circle at center top, var(--surface) 0%, var(--bg) 80%);
+        }
+
+        .badge {
+            display: inline-block;
+            background: var(--gradient);
+            color: #fff;
+            padding: 0.4rem 1.5rem;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 15px rgba(233, 69, 96, 0.3);
+        }
+
+        h1 { font-size: 3.5rem; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 1rem; line-height: 1.2; }
+        h2 { font-size: 2.2rem; border-bottom: 3px solid var(--accent1); display: inline-block; margin: 3rem 0 2rem; padding-bottom: 0.4rem; }
+        
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 5%; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--surface2);
+            border-radius: 12px;
+            padding: 2rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 12px 30px rgba(83, 52, 131, 0.2); }
+        .card h3 { font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--accent1); }
+        .card p.desc { color: var(--text); font-size: 0.95rem; margin-bottom: 1rem; flex-grow: 1; }
+
+        .setup-section {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--surface2);
+        }
+        .setup-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text2);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.8rem;
+        }
+        .setup-list {
+            list-style-position: outside;
+            margin-left: 1rem;
+            color: var(--text2);
+            font-size: 0.85rem;
+        }
+        .setup-list li { margin-bottom: 0.4rem; }
+
+        .btn {
+            display: inline-block;
+            background: var(--surface2);
+            color: var(--text);
+            padding: 0.7rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            font-size: 0.9rem;
+            text-decoration: none;
+            text-align: center;
+            margin-top: 1.5rem;
+            transition: all 0.2s;
+        }
+        .btn:hover:not(:disabled) { background: var(--gradient); color: #fff; border-color: transparent; }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .section-block {
+            background: var(--card);
+            border-left: 4px solid var(--accent2);
+            border-radius: 8px;
+            padding: 2.5rem;
+            margin: 2rem 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .yt-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #e74c3c;
+            color: #fff;
+            padding: 0.5rem 1.2rem;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            margin-top: 1rem;
+            transition: background 0.2s;
+        }
+        .yt-link:hover { background: #c0392b; }
+
+        /* IDE Styles */
+        .code-toolbar { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; align-items: center; }
+        #codeEditor {
+            width: 100%;
+            height: 450px;
+            background: #0d0d16;
+            color: #00ffcc;
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.95rem;
+            border-radius: 8px;
+            resize: vertical;
+        }
+        .light #codeEditor { background: #f8f9fa; color: #b30000; }
+
+        /* Toast Notifications */
+        .toast {
+            position: fixed; top: 80px; left: 50%; transform: translateX(-50%) translateY(-20px);
+            background: var(--surface2); color: white; padding: 12px 24px;
+            border-radius: 8px; z-index: 9999; box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            border: 1px solid var(--border); font-weight: 600;
+            opacity: 0; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); pointer-events: none;
+        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .toast.error { border-color: #e74c3c; color: #ffcccc; }
+
+        /* Chat Widget */
+        .chat-widget { position: fixed; bottom: 30px; right: 30px; z-index: 1000; }
+        #chatToggle {
+            background: var(--gradient);
+            color: #fff; width: 60px; height: 60px;
+            border-radius: 50%; border: none; cursor: pointer; font-size: 1.8rem;
+            box-shadow: 0 5px 15px rgba(233, 69, 96, 0.4);
+            transition: transform 0.2s;
+        }
+        #chatToggle:hover { transform: scale(1.05); }
+        .chat-window {
+            position: absolute; bottom: 80px; right: 0; width: 450px; height: 600px;
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 12px; display: flex; flex-direction: column; overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(20px) scale(0.95);
+        }
+        .chat-window.show {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0) scale(1);
+        }
+        .chat-window.fullscreen {
+            position: fixed; bottom: 0; right: 0; width: 100vw; height: 100vh;
+            border-radius: 0; z-index: 10000; transform: none !important;
+        }
+        .chat-header { background: var(--gradient); color: #fff; padding: 15px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; }
+        .chat-body { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; scroll-behavior: smooth; }
+        .msg { padding: 10px 14px; border-radius: 12px; font-size: 0.9rem; max-width: 85%; line-height: 1.4; }
+        .msg.bot { background: var(--surface2); align-self: flex-start; color: var(--text); border-bottom-left-radius: 2px; }
+        .msg.user { background: var(--accent2); color: #fff; align-self: flex-end; border-bottom-right-radius: 2px; }
+        .chat-input { display: flex; padding: 10px; background: var(--surface2); }
+        .chat-input input { flex: 1; padding: 10px; border-radius: 6px; border: 1px solid var(--border); background: var(--card); color: var(--text); outline: none; }
+        .chat-input button { background: var(--accent1); border: none; color: white; padding: 0 15px; margin-left: 8px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+
+        footer {
+            text-align: center;
+            padding: 3rem 5%;
+            border-top: 1px solid var(--surface2);
+            margin-top: 4rem;
+            background: var(--surface);
+        }
+        .footer-brand { font-size: 1.2rem; font-weight: 800; color: var(--accent1); margin-bottom: 0.5rem; letter-spacing: 1px; }
+        .footer-text { color: var(--text2); font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+
+<div id="toast" class="toast">Notification Message</div>
+
+<header>
+    <div class="logo">Aether<span>link</span></div>
+    <nav>
+        <a href="#downloads" class="t-nav-dl">Repositories</a>
+        <a href="#dumping" class="t-nav-guides">Guides</a>
+        <a href="#code-dev" class="t-nav-ide">Dev Studio</a>
+        <div class="header-btns">
+            <button id="themeBtn" class="ui-btn" onclick="toggleTheme()">☀️ Light Mode</button>
+            <button id="langBtn" class="ui-btn" onclick="toggleLanguage()">AL / EN</button>
+        </div>
+    </nav>
+</header>
+
+<section class="hero">
+    <div class="container">
+        <span class="badge">EmuPackage Suite</span>
+        <h1 class="t-hero-title">High-End Archival Emulation</h1>
+        <p class="t-hero-desc" style="font-size: 1.2rem; color: var(--text2); max-width: 700px; margin: 0 auto;">
+            The ultimate, professionally curated care package by Aetherlink for preserving, managing, and playing your legally owned game library at maximum fidelity.
+        </p>
+    </div>
+</section>
+
+<div class="container">
+    <!-- DOWNLOADS -->
+    <section id="downloads">
+        <h2 class="t-dl-title">Verified Repositories</h2>
+        <div class="grid">
+            <!-- Cemu -->
+            <div class="card">
+                <h3>Cemu</h3>
+                <p class="desc t-cemu-desc">Advanced Wii U emulator delivering exceptional performance, 4K graphics, and mod support. Famously optimized for titles like The Legend of Zelda: Breath of the Wild.</p>
+                <div class="setup-section">
+                    <div class="setup-title t-setup-title">Setup Guide</div>
+                    <ol class="setup-list">
+                        <li class="t-cemu-s1">Download and extract the latest stable release.</li>
+                        <li class="t-cemu-s2">Place your legally dumped <code>keys.txt</code> in the root directory.</li>
+                        <li class="t-cemu-s3">Configure input mappings and enable relevant Graphics Packs.</li>
+                    </ol>
+                </div>
+                <a href="https://github.com/cemu-project/Cemu" target="_blank" class="btn">View Source</a>
+            </div>
+
+            <!-- Citra -->
+            <div class="card">
+                <h3>Citra</h3>
+                <p class="desc t-citra-desc">Premier Nintendo 3DS emulator featuring high-resolution scaling, comprehensive dual-screen layout customization, and robust library compatibility.</p>
+                <div class="setup-section">
+                    <div class="setup-title t-setup-title">Setup Guide</div>
+                    <ol class="setup-list">
+                        <li class="t-citra-s1">Install via the official repository or automated installer.</li>
+                        <li class="t-citra-s2">Decrypt your 3DS ROMs using a hacked console.</li>
+                        <li class="t-citra-s3">Map your controller and define your preferred dual-screen layout.</li>
+                    </ol>
+                </div>
+                <a href="https://citra-emulator.com/" target="_blank" class="btn">View Source</a>
+            </div>
+
+            <!-- Delta -->
+            <div class="card">
+                <h3>Delta</h3>
+                <p class="desc t-delta-desc">The quintessential iOS multi-system application. Seamlessly supports NES, SNES, N64, GBA, and DS with an elegant UI, cloud syncing, and controller support.</p>
+                <div class="setup-section">
+                    <div class="setup-title t-setup-title">Setup Guide</div>
+                    <ol class="setup-list">
+                        <li class="t-delta-s1">Install via AltStore or directly from your regional App Store.</li>
+                        <li class="t-delta-s2">Import your archived ROMs securely via the iOS Files app.</li>
+                        <li class="t-delta-s3">For Nintendo DS functionality, import the requisite BIOS files.</li>
+                    </ol>
+                </div>
+                <a href="https://github.com/rileytestut/Delta" target="_blank" class="btn">View Source</a>
+            </div>
+
+            <!-- Dolphin -->
+            <div class="card">
+                <h3>Dolphin</h3>
+                <p class="desc t-dolphin-desc">Industry-leading GameCube and Wii emulator offering unparalleled enhancements, including 4K upscaling, widescreen hacks, and native Bluetooth Wiimote support.</p>
+                <div class="setup-section">
+                    <div class="setup-title t-setup-title">Setup Guide</div>
+                    <ol class="setup-list">
+                        <li class="t-dolphin-s1">Download the latest development or beta build for maximum compatibility.</li>
+                        <li class="t-dolphin-s2">Point the emulator to your dedicated games directory.</li>
+                        <li class="t-dolphin-s3">Configure a standard controller or connect an authentic Wiimote.</li>
+                    </ol>
+                </div>
+                <a href="https://github.com/dolphin-emu/dolphin" target="_blank" class="btn">View Source</a>
+            </div>
+
+            <!-- Ryujinx -->
+            <div class="card">
+                <h3>Ryujinx</h3>
+                <p class="desc t-ryujinx-desc">Highly accurate Nintendo Switch emulator engineered for maximum compatibility, pristine audio precision, and excellent performance across the system's catalog.</p>
+                <div class="setup-section">
+                    <div class="setup-title t-setup-title">Setup Guide</div>
+                    <ol class="setup-list">
+                        <li class="t-ryujinx-s1">Download and extract the framework to your system.</li>
+                        <li class="t-ryujinx-s2">Install your dumped Switch firmware and <code>prod.keys</code>.</li>
+                        <li class="t-ryujinx-s3">Add your game directory and finalize your input configurations.</li>
+                    </ol>
+                </div>
+                <a href="https://git.ryujinx.app/Ryubing/Canary/releases/tag/1.3.287" target="_blank" class="btn">View Source</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- DUMPING -->
+    <section id="dumping">
+        <h2 class="t-dump-title">Archival & Dumping Guides</h2>
+        <div class="grid">
+            <div class="card">
+                <h3>Switch (NXDumpTool)</h3>
+                <p class="desc t-dump-sw">Safely extract gamecards to NSP/XCI formats using a system running Custom Firmware.</p>
+                <a href="https://www.youtube.com/results?search_query=how+to+dump+switch+games+nxdumptool" target="_blank" class="yt-link">▶ Video Walkthrough</a>
+            </div>
+            <div class="card">
+                <h3>Wii U (Dumpling)</h3>
+                <p class="desc t-dump-wiiu">Transfer physical or digital games directly to SD or USB storage via the Homebrew Launcher.</p>
+                <a href="https://www.youtube.com/results?search_query=wii+u+dumpling+guide" target="_blank" class="yt-link">▶ Video Walkthrough</a>
+            </div>
+            <div class="card">
+                <h3>3DS (GodMode9)</h3>
+                <p class="desc t-dump-3ds">Extract raw .3ds files from your authentic cartridges using the GodMode9 payload.</p>
+                <a href="https://www.youtube.com/results?search_query=godmode9+dump+3ds+games" target="_blank" class="yt-link">▶ Video Walkthrough</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- CODE STUDIO -->
+    <section id="code-dev" class="section-block">
+        <h2 class="t-ide-title">Aetherlink Dev Studio</h2>
+        <div class="code-toolbar">
+            <select id="langSelect" class="ui-btn">
+                <option value="python">Python</option>
+                <option value="java">Java</option>
+                <option value="html">HTML</option>
+                <option value="js">JavaScript</option>
+                <option value="cpp">C++</option>
+            </select>
+            <button class="btn t-btn-save" onclick="saveCode()" style="margin-top:0;">💾 Save Module</button>
+            <button class="btn" onclick="copyCode()" style="margin-top:0;">📋 Copy</button>
+            
+            <div style="flex-basis: 100%; height: 5px;"></div> <!-- visual break -->
+            
+            <input type="text" id="aiPrompt" placeholder="Describe a feature to inject..." style="flex:1; padding: 8px 15px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg); color: var(--text);">
+            <button id="btnAiFix" class="btn t-btn-fix" onclick="fixCodeAI()" style="margin-top:0; border-color: var(--accent1);">✨ AI Debug</button>
+            <button id="btnAiMod" class="btn" onclick="modifyCodeAI()" style="margin-top:0; background: var(--accent2); border-color: var(--accent2);">🚀 Execute</button>
+        </div>
+        <textarea id="codeEditor" placeholder="// Initialize Aetherlink environment..."></textarea>
+    </section>
+
+    <!-- Q&A -->
+    <section id="faq">
+        <h2 class="t-qa-title">Frequently Asked Questions</h2>
+        <div class="section-block">
+            <h4 class="t-q1" style="color: var(--accent1); margin-bottom: 0.5rem; font-size: 1.1rem;">Is emulation legally protected?</h4>
+            <p class="t-a1" style="color: var(--text2); margin-bottom: 1.5rem;">Yes. Emulating hardware is entirely legal. However, piracy—downloading copyrighted ROMs or ISOs you do not physically own—is strictly prohibited and against Aetherlink's policies. Always dump your own software.</p>
+            
+            <h4 class="t-q2" style="color: var(--accent1); margin-bottom: 0.5rem; font-size: 1.1rem;">How can I resolve performance stuttering?</h4>
+            <p class="t-a2" style="color: var(--text2); margin-bottom: 1.5rem;">Ensure your emulator's graphics API is set to Vulkan (where applicable), compile your shader caches correctly, and verify your operating system is operating in a High Performance power state.</p>
+
+            <h4 class="t-q3" style="color: var(--accent1); margin-bottom: 0.5rem; font-size: 1.1rem;">Do I need a powerful PC to emulate these consoles?</h4>
+            <p class="t-a3" style="color: var(--text2); margin-bottom: 1.5rem;">Older systems like DS and N64 run on almost anything, but Switch and Wii U require modern multi-core CPUs and dedicated GPUs.</p>
+
+            <h4 class="t-q4" style="color: var(--accent1); margin-bottom: 0.5rem; font-size: 1.1rem;">Can I play multiplayer online?</h4>
+            <p class="t-a4" style="color: var(--text2);">Yes, many emulators support online play via custom servers or local network simulation like Netplay.</p>
+        </div>
+    </section>
+</div>
+
+<footer>
+    <div class="footer-brand">Aetherlink Technologies</div>
+    <div class="footer-text">Preserving digital history. Designed for educational and archival utility.</div>
+    <div class="footer-text" style="margin-top: 1rem; opacity: 0.6;">&copy; 2026 EmuPackage by Aetherlink. All rights reserved.</div>
+</footer>
+
+<!-- CHAT WIDGET -->
+<div class="chat-widget">
+    <button id="chatToggle" onclick="toggleChat()">🤖</button>
+    <div class="chat-window" id="chatWindow">
+        <div class="chat-header">
+            <span class="t-bot-name">Aetherlink Assistant</span>
+            <div>
+                <button onclick="toggleChatFullscreen()" style="background:none; border:none; color:white; cursor:pointer; font-size: 1.2rem; margin-right: 8px;" title="Toggle Fullscreen">⛶</button>
+                <button onclick="toggleChat()" style="background:none; border:none; color:white; cursor:pointer; font-size: 1.2rem;">&times;</button>
+            </div>
+        </div>
+        <div class="chat-body" id="chatBody">
+            <div class="msg bot">Greetings from Aetherlink! I can assist with framework setup, configurations, and general troubleshooting. How can I help you today?</div>
+        </div>
+        <div class="chat-input">
+            <input type="text" id="chatInput" placeholder="Input query here..." onkeydown="if(event.key==='Enter') sendChat()">
+            <button onclick="sendChat()">Send</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- UI LOGIC ---
+    function toggleTheme() {
+        document.body.classList.toggle('light');
+        const btn = document.getElementById('themeBtn');
+        btn.innerText = document.body.classList.contains('light') ? '🌙 Dark Mode' : '☀️ Light Mode';
+    }
+
+    let toastTimeout;
+    function showToast(message, isError = false) {
+        const toast = document.getElementById('toast');
+        toast.innerText = message;
+        toast.className = `toast show ${isError ? 'error' : ''}`;
+        clearTimeout(toastTimeout);
+        toastTimeout = setTimeout(() => { toast.classList.remove('show'); }, 3000);
+    }
+
+    let isAlbanian = false;
+    const dict = {
+        "t-nav-dl": { en: "Repositories", al: "Repozitorët" },
+        "t-nav-guides": { en: "Guides", al: "Udhëzuesit" },
+        "t-nav-ide": { en: "Dev Studio", al: "Studio e Zhvillimit" },
+        "t-hero-title": { en: "High-End Archival Emulation", al: "Emulim Arkivor i Klasit të Lartë" },
+        "t-hero-desc": { en: "The ultimate, professionally curated care package by Aetherlink for preserving, managing, and playing your legally owned game library at maximum fidelity.", al: "Paketa përfundimtare e kuruar profesionalisht nga Aetherlink për të ruajtur, menaxhuar dhe luajtur librarinë e lojërave që i zotëroni ligjërisht, me cilësinë maksimale." },
+        "t-dl-title": { en: "Verified Repositories", al: "Repozitorët e Verifikuar" },
+        "t-dump-title": { en: "Archival & Dumping Guides", al: "Udhëzuesit e Arkivimit & Kopjimit" },
+        "t-ide-title": { en: "Aetherlink Dev Studio", al: "Aetherlink Studio e Zhvillimit" },
+        "t-btn-save": { en: "💾 Save Module", al: "💾 Ruaj Modulin" },
+        "t-btn-fix": { en: "✨ AI Debug", al: "✨ AI Rregullo" },
+        "t-qa-title": { en: "Frequently Asked Questions", al: "Pyetjet më të Shpeshta" },
+        
+        "t-cemu-desc": { en: "Advanced Wii U emulator delivering exceptional performance, 4K graphics, and mod support. Famously optimized for titles like The Legend of Zelda: Breath of the Wild.", al: "Emulator i avancuar për Wii U që ofron performancë të jashtëzakonshme, grafikë 4K dhe mbështetje për modifikime. Shumë i optimizuar për tituj si The Legend of Zelda: Breath of the Wild." },
+        "t-citra-desc": { en: "Premier Nintendo 3DS emulator featuring high-resolution scaling, comprehensive dual-screen layout customization, and robust library compatibility.", al: "Emulatori kryesor për Nintendo 3DS që përmban rritje të rezolucionit, përshtatje të plotë të ekraneve të dyfishta dhe pajtueshmëri të gjerë." },
+        "t-delta-desc": { en: "The quintessential iOS multi-system application. Seamlessly supports NES, SNES, N64, GBA, and DS with an elegant UI, cloud syncing, and controller support.", al: "Aplikacioni multi-sistemor thelbësor për iOS. Mbështet pa probleme NES, SNES, N64, GBA dhe DS me një ndërfaqe elegante, sinkronizim në cloud dhe mbështetje për kontrollues." },
+        "t-dolphin-desc": { en: "Industry-leading GameCube and Wii emulator offering unparalleled enhancements, including 4K upscaling, widescreen hacks, and native Bluetooth Wiimote support.", al: "Emulatori udhëheqës për GameCube dhe Wii që ofron përmirësime të pashoqe, duke përfshirë ngritjen në 4K, formatet widescreen dhe mbështetjen natyrale për Wiimote me Bluetooth." },
+        "t-ryujinx-desc": { en: "Highly accurate Nintendo Switch emulator engineered for maximum compatibility, pristine audio precision, and excellent performance across the system's catalog.", al: "Emulator i Nintendo Switch me saktësi të lartë, i projektuar për pajtueshmëri maksimale, saktësi zanore dhe performancë të shkëlqyer në të gjithë katalogun e sistemit." },
+        
+        "t-setup-title": { en: "Setup Guide", al: "Udhëzuesi i Instalimit" },
+        "t-cemu-s1": { en: "Download and extract the latest stable release.", al: "Shkarkoni dhe ekstraktoni versionin e fundit të qëndrueshëm." },
+        "t-cemu-s2": { en: "Place your legally dumped keys.txt in the root directory.", al: "Vendosni skedarin keys.txt të kopjuar ligjërisht në direktorinë kryesore." },
+        "t-cemu-s3": { en: "Configure input mappings and enable relevant Graphics Packs.", al: "Konfiguroni kontrollet dhe aktivizoni Paketat Grafike përkatëse." },
+        "t-citra-s1": { en: "Install via the official repository or automated installer.", al: "Instaloni përmes repozitorit zyrtar ose instaluesit automatik." },
+        "t-citra-s2": { en: "Decrypt your 3DS ROMs using a hacked console.", al: "Dekriptoni ROM-et e 3DS duke përdorur një konsolë të modifikuar." },
+        "t-citra-s3": { en: "Map your controller and define your preferred dual-screen layout.", al: "Konfiguroni kontrolluesin dhe përcaktoni paraqitjen e preferuar me dy ekrane." },
+        "t-delta-s1": { en: "Install via AltStore or directly from your regional App Store.", al: "Instaloni përmes AltStore ose direkt nga App Store i rajonit tuaj." },
+        "t-delta-s2": { en: "Import your archived ROMs securely via the iOS Files app.", al: "Importoni ROM-et tuaja të arkivuara në mënyrë të sigurt përmes aplikacionit Files në iOS." },
+        "t-delta-s3": { en: "For Nintendo DS functionality, import the requisite BIOS files.", al: "Për funksionalitetin e Nintendo DS, importoni skedarët e nevojshëm BIOS." },
+        "t-dolphin-s1": { en: "Download the latest development or beta build for maximum compatibility.", al: "Shkarkoni versionin e fundit zhvillimor ose beta për pajtueshmëri maksimale." },
+        "t-dolphin-s2": { en: "Point the emulator to your dedicated games directory.", al: "Drejtoni emulatorin te direktoria juaj e dedikuar e lojërave." },
+        "t-dolphin-s3": { en: "Configure a standard controller or connect an authentic Wiimote.", al: "Konfiguroni një kontrollues standard ose lidhni një Wiimote origjinal." },
+        "t-ryujinx-s1": { en: "Download and extract the framework to your system.", al: "Shkarkoni dhe ekstraktoni strukturën në sistemin tuaj." },
+        "t-ryujinx-s2": { en: "Install your dumped Switch firmware and prod.keys.", al: "Instaloni firmuerin e kopjuar të Switch dhe skedarin prod.keys." },
+        "t-ryujinx-s3": { en: "Add your game directory and finalize your input configurations.", al: "Shtoni direktorinë e lojërave dhe përfundoni konfigurimet e kontrolleve." },
+
+        "t-q1": { en: "Is emulation legally protected?", al: "A është emulimi i mbrojtur ligjërisht?" },
+        "t-a1": { en: "Yes. Emulating hardware is entirely legal. However, piracy—downloading copyrighted ROMs or ISOs you do not physically own—is strictly prohibited and against Aetherlink's policies. Always dump your own software.", al: "Po. Emulimi i harduerit është plotësisht i ligjshëm. Megjithatë, pirateria—shkarkimi i ROM-eve ose ISO-ve me të drejta autori që nuk i zotëroni fizikisht—është rreptësisht e ndaluar dhe kundër politikave të Aetherlink. Gjithmonë kopjoni softuerin tuaj." },
+        "t-q2": { en: "How can I resolve performance stuttering?", al: "Si mund të zgjidh ndërprerjet e performancës?" },
+        "t-a2": { en: "Ensure your emulator's graphics API is set to Vulkan (where applicable), compile your shader caches correctly, and verify your operating system is operating in a High Performance power state.", al: "Sigurohuni që API grafike e emulatorit tuaj është vendosur në Vulkan (aty ku aplikohet), përpiloni saktë memoriet e hijeve dhe verifikoni që sistemi juaj operativ po punon në një gjendje energjie me Performancë të Lartë." },
+        "t-q3": { en: "Do I need a powerful PC to emulate these consoles?", al: "A më duhet një kompjuter i fuqishëm për të emuluar këto konsola?" },
+        "t-a3": { en: "Older systems like DS and N64 run on almost anything, but Switch and Wii U require modern multi-core CPUs and dedicated GPUs.", al: "Sistemet më të vjetra si DS dhe N64 funksionojnë në pothuajse çdo gjë, por Switch dhe Wii U kërkojnë procesorë modernë me shumë bërthama dhe karta grafike të dedikuara." },
+        "t-q4": { en: "Can I play multiplayer online?", al: "A mund të luaj në internet me shumë lojtarë?" },
+        "t-a4": { en: "Yes, many emulators support online play via custom servers or local network simulation like Netplay.", al: "Po, shumë emulatorë mbështesin lojën në internet përmes serverëve të personalizuar ose simulimit të rrjetit lokal si Netplay." }
+    };
+
+    function toggleLanguage() {
+        isAlbanian = !isAlbanian;
+        const lang = isAlbanian ? 'al' : 'en';
+        
+        for (const [id, t] of Object.entries(dict)) {
+            const elements = document.querySelectorAll('.' + id);
+            elements.forEach(el => {
+                if (el) el.innerHTML = t[lang];
+            });
+        }
+    }
+
+    function toggleChat() {
+        const win = document.getElementById('chatWindow');
+        win.classList.toggle('show');
+    }
+
+    function toggleChatFullscreen() {
+        const win = document.getElementById('chatWindow');
+        win.classList.toggle('fullscreen');
+    }
+
+    function copyCode() {
+        const editor = document.getElementById('codeEditor');
+        if (!editor.value) {
+            showToast("Nothing to copy!", true);
+            return;
+        }
+        navigator.clipboard.writeText(editor.value).then(() => {
+            showToast("Code copied to clipboard!");
+        }).catch(err => {
+            showToast("Failed to copy code.", true);
+        });
+    }
+
+    function saveCode() {
+        const code = document.getElementById('codeEditor').value;
+        const lang = document.getElementById('langSelect').value;
+        const ext = {python:'.py', java:'.java', html:'.html', js:'.js', cpp:'.cpp'}[lang];
+        const blob = new Blob([code], {type: "text/plain"});
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "aetherlink_module" + ext;
+        a.click();
+    }
+
+    // --- CEREBRAS API LOGIC ---
+    const CEREBRAS_API_KEY = 'csk-e582jedjcnxn55ch8y6mjhd6v442tpddry2c8fykxd38exdc';
+
+    async function callCerebras(messages) {
+        if (CEREBRAS_API_KEY === 'YOUR_CEREBRAS_API_KEY_HERE') return "System Error: Aetherlink API Key missing. Please update your environment variables.";
+        try {
+            const res = await fetch('https://api.cerebras.ai/v1/chat/completions', {
+                method: 'POST',
+                headers: { 
+                    'Authorization': `Bearer ${CEREBRAS_API_KEY}`, 
+                    'Content-Type': 'application/json' 
+                },
+                body: JSON.stringify({ model: 'llama3.1-8b', messages: messages }) 
+            });
+            const data = await res.json();
+            
+            if (!res.ok) return `API Error: ${data.error?.message || res.statusText}`;
+            return data.choices[0].message.content;
+        } catch (e) { 
+            return "Connection Error to Aetherlink servers."; 
+        }
+    }
+
+    function extractCode(reply) {
+        const match = reply.match(/```[a-zA-Z]*\n([\s\S]*?)```/);
+        return match ? match[1].trim() : reply.replace(/```[a-zA-Z]*\n?/g, '').replace(/```/g, '').trim();
+    }
+
+    function toggleAILoading(isLoading) {
+        const btnFix = document.getElementById('btnAiFix');
+        const btnMod = document.getElementById('btnAiMod');
+        if (isLoading) {
+            btnFix.disabled = true; btnMod.disabled = true;
+            btnFix.innerText = "⚙️ Thinking..."; btnMod.innerText = "⚙️ Thinking...";
+        } else {
+            btnFix.disabled = false; btnMod.disabled = false;
+            btnFix.innerText = "✨ AI Debug"; btnMod.innerText = "🚀 Execute";
+        }
+    }
+
+    async function sendChat() {
+        const input = document.getElementById('chatInput');
+        const body = document.getElementById('chatBody');
+        if (!input.value) return;
+
+        body.innerHTML += `<div class="msg user">${input.value}</div>`;
+        const userMsg = input.value;
+        input.value = '';
+        body.scrollTop = body.scrollHeight; 
+
+        const reply = await callCerebras([
+            {role: "system", content: "You are the Aetherlink Assistant, a highly professional, technical support AI bot for emulators like Dolphin, Cemu, and Ryujinx. Provide concise, expert-level technical answers."},
+            {role: "user", content: userMsg}
+        ]);
+        body.innerHTML += `<div class="msg bot">${reply}</div>`;
+        body.scrollTop = body.scrollHeight; 
+    }
+
+    async function fixCodeAI() {
+        const editor = document.getElementById('codeEditor');
+        if (!editor.value.trim()) { showToast("Code editor is empty.", true); return; }
+        
+        toggleAILoading(true);
+        const reply = await callCerebras([
+            {role: "system", content: "You are an Aetherlink coding assistant. Fix errors in the provided code snippet. Return strictly the raw code without markdown wrappers."},
+            {role: "user", content: editor.value}
+        ]);
+        toggleAILoading(false);
+
+        if (reply.startsWith("API Error") || reply.startsWith("Connection Error") || reply.startsWith("System Error")) {
+            showToast(reply, true);
+            return;
+        }
+        editor.value = extractCode(reply);
+        showToast("Code debugged successfully!");
+    }
+
+    async function modifyCodeAI() {
+        const editor = document.getElementById('codeEditor');
+        const prompt = document.getElementById('aiPrompt').value;
+        
+        if (!prompt.trim()) {
+            showToast("Please describe a feature to inject first.", true);
+            return;
+        }
+
+        toggleAILoading(true);
+        const reply = await callCerebras([
+            {role: "system", content: "You are an Aetherlink coding assistant. Modify the code strictly based on the user's instructions. Return only the raw code without any markdown wrappers or explanations."},
+            {role: "user", content: `Code:\n${editor.value}\n\nInstruction: ${prompt}`}
+        ]);
+        toggleAILoading(false);
+        
+        if (reply.startsWith("API Error") || reply.startsWith("Connection Error") || reply.startsWith("System Error")) {
+            showToast(reply, true);
+            return;
+        }
+        editor.value = extractCode(reply);
+        document.getElementById('aiPrompt').value = ''; // clear input after success
+        showToast("Code modified successfully!");
+    }
+</script>
+
+</body>
+</html>
